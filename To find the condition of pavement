@@ -1,0 +1,21 @@
+#include <stdio.h>
+
+int main()
+{
+    int n,c,i;
+    printf("Enter No of samples\n");
+    scanf("%d",&n);
+    printf("Enter the Pavement Condition Index\n");
+    for(i=0;i<n;i++)
+    {scanf("%d",&c);
+    if(c>=85)
+     printf("Pavement Condition is Excellent\n");
+    else if(c>=70 && c<85)
+     printf("Pavement Condition is Good\n");
+    else if(c>=55 && c<70)
+     printf("Pavement Condition is Fair\n");
+    else if(c<55)
+     printf("Pavement Condition is Poor\n");
+    return 0;
+}
+}
