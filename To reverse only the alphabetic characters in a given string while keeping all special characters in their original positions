@@ -1,0 +1,28 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+void reverseAlphabetic(char *str) {
+    int l = 0, r = strlen(str) - 1;
+    while (l < r) {
+        if (!isalpha(str[l])) {
+            l++;
+        } else if (!isalpha(str[r])) {
+            r--;
+        } else {
+            char temp = str[l];
+            str[l] = str[r];
+            str[r] = temp;
+            l++;
+            r--;
+        }
+    }
+}
+
+int main() {
+    char str[100];
+    scanf("%s", str);
+    reverseAlphabetic(str);
+    printf("%s", str);
+    return 0;
+}
