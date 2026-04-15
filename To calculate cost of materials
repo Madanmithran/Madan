@@ -1,0 +1,24 @@
+#include <stdio.h>
+
+int main() {
+	float cq,stq,sq,cbr,ser,sr,cc,stc,sc,gst,tot,tc,gs;
+	printf("\n Enter the 1.quantity 2.rate of Cement(bags): ");
+    scanf("%f %f",&cq,&cbr);
+    printf("\n Enter the 1.quantity 2.rate of Steel (ton) : ");
+    scanf("%f %f",&stq,&ser);
+    printf("\n Enter the 1.quantity 2.rate  of Sand (ton) : ");
+    scanf("%f %f",&sq,&sr);
+    printf("\n Enter the gst % : ");
+    scanf("%f",&gst);
+    cc=cq*cbr;
+    stc=stq*ser;
+    sc=sq*sr;
+    gs=gst/100;
+    printf("\n Cost of %.2f cementbags per %.2f rate =$ %.2f  ",cq,cbr,cc);
+    printf("\n Cost of %.2f ton Steel per  %.2f rate =$ %.2f  ",stq,ser,sc);
+    printf("\n Cost of %.2f ton Sand  per  %.2f rate =$ %.2f  ",sq,sr,sc);
+    tot=cc+stc+sc;
+    printf("\n Total cost without gst : $ %.2f",tot);
+    tc=tot*gs;
+    printf("\n Total cost with gst    : $ %.2f",tc);
+}
