@@ -1,0 +1,22 @@
+#include <stdio.h>
+
+int main()
+{
+    float cs;
+    int n,i;
+    printf("Enter No of samples\n");
+    scanf("%d",&n);
+    printf("Enter the compressives Strength\n");
+    for(i=0;i<n;i++){
+    scanf("%f",&cs);
+    if (cs>=40)
+    printf("Concrte Quality is Excellent\n");
+    else if (cs>=30 && cs<40)
+    printf("Concrte Quality is Good\n");
+    else if (cs>=20 && cs<30)
+    printf("Concrte Quality is Average\n");
+    else if (cs>=20)
+    printf("Concrte Quality is Poor\n");
+    return 0;
+}
+
