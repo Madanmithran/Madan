@@ -1,0 +1,32 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+int main()
+{
+    int c;
+    while(1){
+    printf("Enter Construction Type\n 1-> Residential\n 2-> Commercial\n 3-> Bridge\n 4-> Road \n 5-> Exit\n");
+    scanf("%d",&c);
+    switch(c)
+    {
+      case 1:
+      printf("Material -> Brick & RCC \n");
+      break;
+      case 2:
+      printf("Material -> RCC & Steel \n");
+      break;
+      case 3:
+      printf("Material -> Prestressed Concrete & Steel \n");
+      break;
+      case 4:
+      printf("Material -> Bitumin & Concrete \n");
+      break;
+      case 5:
+      exit(0);
+      default:
+      printf("Please Enter a Valid Option \n");
+      break;
+    }
+
+}
+}
