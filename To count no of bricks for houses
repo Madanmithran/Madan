@@ -1,0 +1,41 @@
+#include <stdio.h>
+
+int f(int w, int b, int arr[50], int n)
+{
+    int i;
+    int tw = 0;
+    int h = w * b;
+    if (arr == NULL)
+        return -1;
+    for (i = 0; i < n; i++)
+    {
+        tw += arr[i];
+
+        if (tw >= h)
+            return i + 1;
+    }
+    return 0;
+}
+
+
+
+int main()
+{
+    int w, h, b, n, i, arr[50], result;
+    printf("Enter no of walls : ");
+    scanf("%d", & w);
+    printf("Enter no of bricks per wall : ");
+    scanf("%d", & b);
+    h= w * b;
+    printf("Enter no of houses : ");
+    scanf("%d", & n);
+    printf("Enter no of bricks per houses : \n");
+    for (i = 0; i < n; i++)
+    {
+        printf("\nHouse no %d : ", i + 1);
+        scanf("%d", & arr[i]);
+    }
+    result = f(w, b, arr, n);
+    printf("\noutput : %d ", result);
+    return 0;
+}
