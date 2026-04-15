@@ -1,0 +1,78 @@
+#include <stdio.h>
+
+int main(void) {
+    double balance = 0.0;
+    int choice;
+    int amount;
+
+    printf("Simple Bank Transaction System\n");
+
+    while (1) {
+        printf("\nMenu:\n");
+        printf("1. Deposit\n");
+        printf("2. Withdraw\n");
+        printf("3. Balance Inquiry\n");
+        printf("4. Exit\n");
+        printf("Enter your choice: ");
+        if (scanf("%d", &choice) != 1) {
+          
+            int c;
+            while ((c = getchar()) != '\n' && c != EOF) {}
+            printf("Invalid input. Please enter a number 1-4.\n");
+            continue;
+        }
+
+        switch (choice) {
+            case 1: // Deposit
+                printf("Enter amount to deposit: ");
+                if (scanf("%lf", &amount) != 1) {
+                    int c;
+                    while ((c = getchar()) != '\n' && c != EOF) {}
+                    printf("Invalid amount.\n");
+                } else if (amount <= 0) {
+                    printf("Deposit amount must be positive.\n");
+                } else {
+                    balance += amount;
+                    printf("Deposited: %.2f\n", amount);
+                    printf("New balance: %.2f\n", balance);
+                }
+                break;
+
+            case 2: // Withdraw
+                printf("Enter amount to withdraw: ");
+                if (scanf("%lf", &amount) != 1) {
+                    int c;
+                    while ((c = getchar()) != '\n' && c != EOF) {}
+                    printf("Invalid amount.\n");
+                } else if (amount <= 0) {
+                    printf("Withdrawal amount must be positive.\n");
+                } else if (amount < 100) {
+                    printf("Withdrawal amount must be at least 100.\n");
+                }
+                  else if (amount % 100 != 0) {
+                    printf("Withdrawal amount must be in multiples of 100.\n");
+                }           
+                  else if (amount > balance) {
+                    printf("Insufficient funds. Withdrawal rejected.\n");
+                } else {
+                    balance -= amount;
+                    printf("Withdrawn: %.2f\n", amount);
+                    printf("New balance: %.2f\n", balance);
+                }
+                break;
+
+            case 3: // Balance Inquiry
+                printf("Current balance: %.2f\n", balance);
+                break;
+
+            case 4: // Exit
+                printf("Exiting. Final balance: %.2f\n", balance);
+                return 0;
+
+            default:
+                printf("Invalid choice. Please select 1-4.\n");
+        }
+    }
+
+    return 0;
+}
