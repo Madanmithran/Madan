@@ -1,0 +1,20 @@
+#include <stdio.h>
+int main()
+{
+	int i,j,s,n;
+	printf("Enter n : ");
+	scanf("%d",&n);
+	s=2*n-1;
+	for(i=0; i<s; i++)
+	{
+		for(j=1; j<s; j++)
+		{
+		 int min=i;
+		 if(j<min)min=j;
+		 if(s-1-i<min)min=s-i;
+		 if(s-1-j<min)min=s-j;
+		 printf("%d",min+1);
+		}
+		printf("\n");
+	}
+}
