@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <string.h>
+
+int main() {
+    char l1[10],l2[10],l3[10];
+    float v1,v2,v3,t,lim;
+    printf("\nEnter the load type 1 : ");
+    scanf("%s",l1);
+    printf("\nEnter the load type 2 : ");
+    scanf("%s",l2);
+    printf("\nEnter the load type 3 : ");
+    scanf("%s",l3);
+    printf("\nEnter the %s load : ",l1);
+    scanf("%f",&v1);
+    printf("\nEnter the %s load : ",l2);
+    scanf("%f",&v2);
+    printf("\nEnter the %s load :",l3);
+    scanf("%f",&v3);
+    printf("\nEnter the Limit :");
+    scanf("%f",&lim);
+    t=v1+v2+v3;
+    printf("\nTotal load = %.2f",t);
+    if(t<lim)
+    printf("\nThe Building is safe");
+    else
+    printf("\nThe Building is unsafe");
+    //default:
+    //printf("\nPlease enter a valid number");
+}
