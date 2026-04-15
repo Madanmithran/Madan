@@ -1,0 +1,20 @@
+#include <stdio.h>
+
+int main()
+{
+    float cw;
+    int n,i;
+    printf("Enter No of samples\n");
+    scanf("%d",&n);
+    printf("Enter the crack width\n");
+    for(i=0;i<n;i++){
+    scanf("%f",&cw);
+    if (cw>=1)
+    printf("Concrte requires major repair\n");
+    else if (cw>=0.3 && cw<=1)
+    printf("Concrte requires minor repair\n");
+    else if (cw<0.3)
+    printf("Concrte is safe\n");
+    return 0;
+}
+
