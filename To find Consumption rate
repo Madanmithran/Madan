@@ -1,0 +1,21 @@
+#include <stdio.h>
+
+int main()
+{
+    float c;
+    int n,i;
+    printf("Enter No of samples\n");
+    scanf("%d",&n);
+    printf("Enter the crack width\n");
+    for(i=0;i<n;i++){
+    scanf("%f",&c);
+    if (c>=1500)
+    printf("Consumption is High\n");
+    else if (c>501 && c<1500)
+    printf("Consumption is Medium\n");
+    else if (c<=500)
+    printf("Consumption is Low\n");
+    return 0;
+}
+}
+
