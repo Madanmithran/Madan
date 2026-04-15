@@ -1,0 +1,12 @@
+#include<stdio.h>
+int main()
+{
+  int s1,s2,s3,s4,s5,s6,tot,avg;
+  printf("Enter mark of Six subjects : ");
+  scanf("%d %d %d %d %d %d",&s1,&s2,&s3,&s4,&s5,&s6);
+  tot=s1+s2+s3+s4+s5+s6;
+  avg=tot/6;
+  printf("The Total is %d \n",tot);
+  printf("The Average is %d",avg);
+  return 0;
+}
