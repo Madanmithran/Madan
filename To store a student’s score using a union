@@ -1,0 +1,34 @@
+#include <stdio.h>
+
+union Score {
+    int marks;
+    char grade;
+};
+int main() {
+    int n;
+    if (scanf("%d", &n) != 1) return 0;
+    union Score arr[100]; 
+    int choice[100];
+
+    for (int i = 0; i < n; ++i) {
+        if (scanf("%d", &choice[i]) != 1) return 0;
+        if (choice[i] == 1) {
+            scanf("%d", &arr[i].marks);
+        } else if (choice[i] == 2) {
+            scanf(" %c", &arr[i].grade);
+        } else {
+            arr[i].marks = 0;
+        }
+    }
+
+    for (int i = 0; i < n; ++i) {
+        if (choice[i] == 1) {
+            printf("The Mark of student  %d : %d\n",i+1,arr[i].marks);
+        } else if (choice[i] == 2) {
+            printf("The Grade of student  %d : %c\n",i+1 ,arr[i].grade);
+        } else {
+            printf("\n");
+        }
+    }
+    return 0;
+}
