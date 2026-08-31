@@ -1,0 +1,208 @@
+import math
+
+class AptitudeSuite:
+    def __init__(self):
+        self.topics = {
+            "1": "Time and Work",
+            "2": "Pipes and Cisterns",
+            "3": "Time, Speed, and Distance (including Trains)",
+            "4": "Profit, Loss, and Discount",
+            "5": "Simple and Compound Interest",
+            "6": "Permutations, Combinations & Probability",
+            "7": "Exit"
+        }
+
+    def menu(self):
+        print("\n" + "="*50)
+        print(" 🧠 QUANTITATIVE APTITUDE CHEAT-SHEET & SOLVER 🧠")
+        print("="*50)
+        for key, value in self.topics.items():
+            print(f" [{key}] {value}")
+        print("="*50)
+
+    def time_and_work(self):
+        print("\n--- ⏳ TIME AND WORK ---")
+        print("💡 SHORTCUTS & FACTS:")
+        print(" • If A does work in 'x' days and B in 'y' days, they together do it in: (x * y) / (x + y) days.")
+        print(" • Efficiency is inversely proportional to time: Efficiency = 1 / Time.")
+        print(" • Chain Rule Formula: (M1 * D1 * H1) / W1 = (M2 * D2 * H2) / W2  [M=Men, D=Days, H=Hours, W=Work]")
+        
+        print("\n🔢 AUTOMATED SOLVER:")
+        print("1. Calculate Combined Work Time (A + B)")
+        print("2. Solve using Chain Rule (Men/Days/Work relationship)")
+        choice = input("Select solver option (1-2): ").strip()
+        
+        if choice == "1":
+            try:
+                x = float(input("Days taken by person A (x): "))
+                y = float(input("Days taken by person B (y): "))
+                ans = (x * y) / (x + y)
+                print(f"✨ Together they will complete the work in: {ans:.2f} days.")
+            except ZeroDivisionError:
+                print("❌ Days cannot be zero.")
+        elif choice == "2":
+            print("\nLeave the unknown variable as '0' or blank to calculate it:")
+            try:
+                m1 = float(input("Initial Men (M1): ") or 0)
+                d1 = float(input("Initial Days (D1): ") or 0)
+                w1 = float(input("Initial Work Units (W1) [default 1]: ") or 1)
+                m2 = float(input("Final Men (M2): ") or 0)
+                d2 = float(input("Final Days (D2): ") or 0)
+                w2 = float(input("Final Work Units (W2) [default 1]: ") or 1)
+                
+                if m2 == 0:
+                    m2 = (m1 * d1 * w2) / (d2 * w1)
+                    print(f"✨ Required Men (M2) = {m2:.2f}")
+                elif d2 == 0:
+                    d2 = (m1 * d1 * w2) / (m2 * w1)
+                    print(f"✨ Required Days (D2) = {d2:.2f}")
+            except Exception as e:
+                print("❌ Invalid input calculations.")
+
+    def pipes_and_cisterns(self):
+        print("\n--- 🚰 PIPES AND CISTERNS ---")
+        print("💡 SHORTCUTS & FACTS:")
+        print(" • Inlet pipe work is positive (+); Outlet/Leak pipe work is negative (-).")
+        print(" • If an inlet fills a tank in 'x' hours and an outlet empties it in 'y' hours,")
+        print("   net work done per hour when both are open = (1/x) - (1/y).")
+        
+        print("\n🔢 AUTOMATED SOLVER: Combined Net Flow")
+        try:
+            x = float(input("Hours to FILL the tank (Inlet, 0 if none): ") or 0)
+            y = float(input("Hours to EMPTY the tank (Outlet/Leak, 0 if none): ") or 0)
+            
+            inlet_rate = 1/x if x > 0 else 0
+            outlet_rate = 1/y if y > 0 else 0
+            net_rate = inlet_rate - outlet_rate
+            
+            if net_rate > 0:
+                print(f"✨ The tank will be FILLED completely in: {1/net_rate:.2f} hours.")
+            elif net_rate < 0:
+                print(f"✨ The tank will be EMPTIED completely in: {abs(1/net_rate):.2f} hours.")
+            else:
+                print("✨ No change in water level. Net rate is balanced.")
+        except ZeroDivisionError:
+            print("❌ Time values must be greater than zero.")
+
+    def speed_distance_time(self):
+        print("\n--- 🚄 TIME, SPEED, AND DISTANCE ---")
+        print("💡 SHORTCUTS & FACTS:")
+        print(" • Conversion: km/h to m/s ➡️ multiply by 5/18 || m/s to km/h ➡️ multiply by 18/5.")
+        print(" • Average Speed (equal distances journey): (2 * S1 * S2) / (S1 + S2).")
+        print(" • Relative Speed: Same Direction = (S1 - S2) || Opposite Direction = (S1 + S2).")
+        print(" • Train Crossing: Total Distance = Length of Train + Length of Object (Platform/Tunnel).")
+        
+        print("\n🔢 AUTOMATED SOLVER:")
+        print("1. Average Speed Tool")
+        print("2. Train Crossing Time Solver")
+        choice = input("Select solver option (1-2): ").strip()
+        
+        if choice == "1":
+            try:
+                s1 = float(input("Speed for first half (S1): "))
+                s2 = float(input("Speed for second half (S2): "))
+                avg = (2 * s1 * s2) / (s1 + s2)
+                print(f"✨ Average Speed for the total trip = {avg:.2f}")
+            except ZeroDivisionError:
+                print("❌ Speeds cannot be zero.")
+        elif choice == "2":
+            try:
+                t_len = float(input("Length of train (meters): "))
+                obj_len = float(input("Length of platform/tunnel/other train (meters, 0 if pole/man): ") or 0)
+                speed_kmh = float(input("Speed of the train (in km/h): "))
+                
+                speed_ms = speed_kmh * (5/18)
+                total_dist = t_len + obj_len
+                time_taken = total_dist / speed_ms
+                print(f"✨ Time taken to cross completely = {time_taken:.2f} seconds.")
+            except Exception as e:
+                print("❌ Invalid calculation metrics.")
+
+    def profit_loss(self):
+        print("\n--- 📈 PROFIT, LOSS, AND DISCOUNT ---")
+        print("💡 SHORTCUTS & FACTS:")
+        print(" • Profit % = (Profit / CP) * 100 || Loss % = (Loss / CP) * 100  [Always calculated on Cost Price]")
+        print(" • Selling Price (SP) = CP * (100 + Profit%)/100  OR  CP * (100 - Loss%)/100")
+        print(" • Successive Discounts: Single equivalent discount for x% and y% = (x + y - (xy/100))%")
+        
+        print("\n🔢 AUTOMATED SOLVER:")
+        try:
+            cp = float(input("Enter Cost Price (CP): "))
+            sp = float(input("Enter Selling Price (SP): "))
+            diff = sp - cp
+            if diff > 0:
+                p_perc = (diff / cp) * 100
+                print(f"✨ Result: Net PROFIT of {diff:.2f} (+ {p_perc:.2f}%)")
+            elif diff < 0:
+                l_perc = (abs(diff) / cp) * 100
+                print(f"✨ Result: Net LOSS of {abs(diff):.2f} (- {l_perc:.2f}%)")
+            else:
+                print("✨ Result: No Profit, No Loss.")
+        except Exception as e:
+            print("❌ Check inputs.")
+
+    def interest(self):
+        print("\n--- 💰 SIMPLE & COMPOUND INTEREST ---")
+        print("💡 SHORTCUTS & FACTS:")
+        print(" • Simple Interest (SI) = (P * R * T) / 100")
+        print(" • Compound Interest Amount (A) = P * (1 + R/100)^T")
+        print(" • Difference between CI and SI for 2 years = P * (R/100)^2")
+        
+        print("\n🔢 AUTOMATED SOLVER:")
+        try:
+            p = float(input("Principal Amount (P): "))
+            r = float(input("Rate of Interest per annum (R%): "))
+            t = float(input("Time Period in years (T): "))
+            
+            si = (p * r * t) / 100
+            ci_amt = p * math.pow((1 + r/100), t)
+            ci = ci_amt - p
+            
+            print(f"✨ Simple Interest earned = {si:.2f} (Total Maturity value: {p+si:.2f})")
+            print(f"✨ Compound Interest earned = {ci:.2f} (Total Maturity value: {ci_amt:.2f})")
+            if t == 2:
+                print(f"💡 Shortcut check (CI-SI diff for 2 years) = {ci - si:.2f}")
+        except Exception as e:
+            print("❌ Input processing failed.")
+
+    def probability(self):
+        print("\n--- 🎲 PERMUTATIONS, COMBINATIONS & PROBABILITY ---")
+        print("💡 SHORTCUTS & FACTS:")
+        print(" • Permutation (Arrangement): nPr = n! / (n - r)!")
+        print(" • Combination (Selection): nCr = n! / (r! * (n - r)!)")
+        print(" • Probability of an event P(A) = Favorable Outcomes / Total Outcomes.")
+        
+        print("\n🔢 AUTOMATED SOLVER:")
+        try:
+            n = int(input("Total items available (n): "))
+            r = int(input("Items to choose/arrange (r): "))
+            if n >= r >= 0:
+                nPr = math.perm(n, r)
+                nCr = math.comb(n, r)
+                print(f"✨ Permutations (Arrangements, order matters) nPr = {nPr}")
+                print(f"✨ Combinations (Selections, order doesn't matter) nCr = {nCr}")
+            else:
+                print("❌ Constraint error: Ensure n >= r >= 0.")
+        except ValueError:
+            print("❌ Inputs must be positive integers.")
+
+    def run(self):
+        while True:
+            self.menu()
+            choice = input("Choose a topic index (1-7): ").strip()
+            if choice == "1": self.time_and_work()
+            elif choice == "2": self.pipes_and_cisterns()
+            elif choice == "3": self.speed_distance_time()
+            elif choice == "4": self.profit_loss()
+            elif choice == "5": self.interest()
+            elif choice == "6": self.probability()
+            elif choice == "7":
+                print("\nGood luck with your aptitude preparation!")
+                break
+            else:
+                print("Invalid Option! Please select from 1-7.")
+            input("\nPress Enter to return to the Main Menu...")
+
+if __name__ == "__main__":
+    app = AptitudeSuite()
+    app.run()
