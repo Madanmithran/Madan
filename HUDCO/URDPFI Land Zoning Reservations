@@ -1,0 +1,161 @@
+import math
+
+class CityLayoutPlanner:
+    def __init__(self):
+        # HUDCO Standard Carpet/Plot Areas (in Sq Meters) & target split distributions
+        self.hudco_defaults = {
+            "EWS": {"plot_area_sqm": 45.0,  "frontage_m": 4.5, "allocation_ratio": 0.35},
+            "LIG": {"plot_area_sqm": 75.0,  "frontage_m": 6.0, "allocation_ratio": 0.30},
+            "MIG": {"plot_area_sqm": 150.0, "frontage_m": 8.5, "allocation_ratio": 0.25},
+            "HIG": {"plot_area_sqm": 300.0, "frontage_m": 12.0, "allocation_ratio": 0.10}
+        }
+        # HUDCO/URDPFI Land Zoning Reservations (Percentage of Total City Land)
+        self.hudco_zoning = {
+            "residential": 45.0,
+            "roads": 15.0,
+            "commercial": 5.0,
+            "industrial": 10.0,
+            "institutional": 8.0,
+            "recreation": 12.0,
+            "hospital": 5.0
+        }
+
+    def get_demographics(self):
+        print("\n--- 👥 STEP 1: DEMOGRAPHIC INPUTS ---")
+        pop = int(input("Enter target design Population (e.g., 50000): "))
+        avg_members = float(input("Enter average Members Per Family (e.g., 4.5): "))
+        
+        # Calculate calculated families or accept user overrides
+        calc_families = math.ceil(pop / avg_members)
+        print(f"💡 Calculated Families based on Population: {calc_families}")
+        
+        override_fam = input("Do you want to override the Number of Families? (y/n): ").strip().lower()
+        if override_fam == 'y':
+            families = int(input("Enter total Number of Families: "))
+        else:
+            families = calc_families
+            
+        return population, families
+
+    def get_housing_config(self):
+        print("\n--- 🏡 STEP 2: HOUSING & INCOME GROUP CONFIGURATION ---")
+        mode = input("Use standard [HUDCO] defaults or [USER] custom inputs for plots? ").strip().upper()
+        
+        housing_data = {}
+        if mode == "USER":
+            total_ratio = 0
+            for group in ["EWS", "LIG", "MIG", "HIG"]:
+                print(f"\n📝 Configuration for {group}:")
+                ratio = float(input(f"  Enter population reservation ratio (0-1, e.g., 0.35): "))
+                plot_size = float(input(f"  Enter target Plot Size (in Sq. Meters): "))
+                frontage = float(input(f"  Enter Plot Frontage Width (in Meters): "))
+                housing_data[group] = {"plot_area_sqm": plot_size, "frontage_m": frontage, "allocation_ratio": ratio}
+                total_ratio += ratio
+            
+            # Normalize ratios if they don't equal 1.0
+            if not math.isclose(total_ratio, 1.0):
+                print(f"⚠️ Warning: Ratios sum to {total_ratio}. Re-normalising to equal 100%.")
+                for group in housing_data:
+                    housing_data[group]["allocation_ratio"] /= total_ratio
+        else:
+            print("✅ Utilizing standard HUDCO Housing matrices.")
+            housing_data = self.hudco_defaults
+
+        return housing_data
+
+    def get_zoning_config(self):
+        print("\n--- 🏗️ STEP 3: AMENITY & LAND RESERVATION ZONING ---")
+        mode = input("Use standard [HUDCO] zoning percentages or input [USER] custom values? ").strip().upper()
+        
+        zoning_data = {}
+        if mode == "USER":
+            print("⚠️ Note: Ensure your total layout zoning sums up to 100% (excluding Residential).")
+            # Residential is derived or dynamically adjusted based on remaining balance
+            zoning_data["roads"] = float(input("Enter Road network allocation %: "))
+            zoning_data["hospital"] = float(input("Enter Medical/Hospital infrastructure %: "))
+            zoning_data["recreation"] = float(input("Enter Parks & Recreation %: "))
+            zoning_data["commercial"] = float(input("Enter Commercial zoning %: "))
+            zoning_data["industrial"] = float(input("Enter Industrial manufacturing %: "))
+            zoning_data["institutional"] = float(input("Enter Institutional/Educational %: "))
+            
+            non_res = sum(zoning_data.values())
+            if non_res >= 100:
+                print("❌ Error: Infrastructure allocations exceed 100%. Resetting to HUDCO baselines.")
+                zoning_data = self.hudco_zoning
+            else:
+                zoning_data["residential"] = 100.0 - non_res
+                print(f"💡 Remaining balance allocated to Residential Housing: {zoning_data['residential']:.2f}%")
+        else:
+            print("✅ Utilizing HUDCO/URDPFI regional development zoning models.")
+            zoning_data = self.hudco_zoning
+
+        return zoning_data
+
+    def process_layout(self, families, housing, zoning):
+        print("\n" + "="*65)
+        print(" 📐 GENERATING MASTER CITY LAYOUT AND SPATIAL LAND DOSSIER")
+        print("="*65)
+        
+        total_net_housing_area = 0
+        group_results = {}
+        
+        # Calculate housing specific area needs
+        print(f"\n📍 INDIVIDUAL INCOME GROUP LAYOUT RESERVATION:")
+        print(f"{'Group':<6} | {'Families':<10} | {'Plot Size':<12} | {'Frontage':<10} | {'Total Housing Area':<18}")
+        print("-" * 65)
+        
+        for group, metrics in housing.items():
+            group_families = math.ceil(families * metrics["allocation_ratio"])
+            group_housing_area = group_families * metrics["plot_area_sqm"]
+            total_net_housing_area += group_housing_area
+            
+            group_results[group] = {
+                "families": group_families,
+                "plot_size": metrics["plot_area_sqm"],
+                "frontage": metrics["frontage_m"],
+                "area_sqm": group_housing_area
+            }
+            print(f"{group:<6} | {group_families:<10} | {metrics['plot_area_sqm']:<9} m² | {metrics['frontage_m']:<8} m | {group_housing_area:<14,.2f} m²")
+
+        # Derive overall macro city land metrics using residential scaling factor
+        res_factor = zoning["residential"] / 100.0
+        total_city_land_needed_sqm = total_net_housing_area / res_factor
+        
+        print(f"\n🏢 MACRO ZONING BREAKDOWN (Total Area Needed: {total_city_land_needed_sqm:,.2f} m²):")
+        print(f"{'Zone Category':<25} | {'Percentage':<12} | {'Allocated Land Area':<20}")
+        print("-" * 65)
+        
+        for zone, percentage in zoning.items():
+            zone_area = total_city_land_needed_sqm * (percentage / 100.0)
+            # Reassign true housing value to residential row item
+            if zone == "residential":
+                zone_area = total_net_housing_area
+            print(f" • {zone.capitalize():<22} | {percentage:<10}% | {zone_area:<16,.2f} m²")
+            
+        # Square Root baseline estimation for total site boundary lengths
+        site_side_m = math.sqrt(total_city_land_needed_sqm)
+        
+        print("-" * 65)
+        print(f"🚀 SUMMARY METRIC LAYOUT COMPLIANCE ANALYSIS:")
+        print(f" • Net Land Needed for Housing Only : {total_net_housing_area:,.2f} Sq. Meters (~{total_net_housing_area * 10.7639:,.2f} Sq. Ft)")
+        print(f" • Gross Land Needed for Entire City: {total_city_land_needed_sqm:,.2f} Sq. Meters (~{total_city_land_needed_sqm / 4046.856:.2f} Acres)")
+        print(f" • Estimated Matrix Site Dimension   : Assuming Square Layout: ~{site_side_m:.2f} m × {site_side_m:.2f} m")
+        print(f" • Linear Frontage Line Needed (Sum): {sum(group_results[g]['families'] * group_results[g]['frontage'] for g in group_results):,.2f} Meters")
+        print("=" * 65)
+
+    def run(self):
+        print("="*65)
+        print(" 🏛️ CIVIL ENGINEERING STRUCTURAL MACRO CITY LAYOUT DESIGNER ")
+        print("="*65)
+        
+        try:
+            pop, families = self.get_demographics()
+            housing_config = self.get_housing_config()
+            zoning_config = self.get_zoning_config()
+            self.process_layout(families, housing_config, zoning_config)
+        except ValueError:
+            print("\n❌ Calculation Error: Ensure all inputs are positive numeric parameters.")
+
+if __name__ == "__main__":
+    planner = CityLayoutPlanner()
+    planner.run()
