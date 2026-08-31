@@ -1,0 +1,123 @@
+import sys
+
+class CivilUnitConverter:
+    def __init__(self):
+        # Conversion matrices relative to a base unit in each category
+        self.categories = {
+            "1": {
+                "name": "Length / Surveying",
+                "base": "meters (m)",
+                "units": {
+                    "m": 1.0,           # Meter (Base)
+                    "mm": 0.001,        # Millimeter
+                    "cm": 0.01,         # Centimeter
+                    "km": 1000.0,       # Kilometer
+                    "in": 0.0254,       # Inch
+                    "ft": 0.3048,       # Foot
+                    "yd": 0.9144,       # Yard
+                    "mile": 1609.344    # Mile
+                }
+            },
+            "2": {
+                "name": "Area (Land & Cross-sections)",
+                "base": "square meters (m²)",
+                "units": {
+                    "m2": 1.0,          # Square meter (Base)
+                    "mm2": 1e-6,        # Square millimeter
+                    "cm2": 1e-4,        # Square centimeter
+                    "ft2": 0.09290304,  # Square foot
+                    "in2": 0.00064516,  # Square inch
+                    "acre": 4046.8564,  # Acre
+                    "hectare": 10000.0  # Hectare (ha)
+                }
+            },
+            "3": {
+                "name": "Force / Structural Loads",
+                "base": "Newtons (N)",
+                "units": {
+                    "n": 1.0,           # Newton (Base)
+                    "kn": 1000.0,       # Kilonewton
+                    "mn": 1000000.0,    # Meganewton
+                    "kgf": 9.80665,     # Kilogram-force
+                    "lbf": 4.4482216,   # Pound-force
+                    "kip": 4448.2216    # Kilopound-force
+                }
+            },
+            "4": {
+                "name": "Pressure / Stress / Soil Bearing Capacity",
+                "base": "Pascals (Pa)",
+                "units": {
+                    "pa": 1.0,          # Pascal (Base)
+                    "kpa": 1000.0,      # Kilopascal
+                    "mpa": 1000000.0,   # Megapascal (N/mm²)
+                    "gpa": 1e9,         # Gigapascal (Concrete/Steel Modulus)
+                    "psi": 6894.757,    # Pounds per sq inch
+                    "ksf": 47880.26,    # Kips per sq foot (Soil bearing)
+                    "bar": 100000.0     # Bar
+                }
+            },
+            "5": {
+                "name": "Discharge / Hydraulics / Flow Rate",
+                "base": "cubic meters per second (m³/s)",
+                "units": {
+                    "m3/s": 1.0,        # Cumecs (Base)
+                    "l/s": 0.001,       # Liters per second
+                    "l/min": 1.66667e-5,# Liters per minute
+                    "cfs": 0.0283168,   # Cusecs (Cubic feet per second)
+                    "mgd": 0.0438126    # Million Gallons per Day
+                }
+            }
+        }
+
+    def display_categories(self):
+        print("\n=== CIVIL ENGINEERING UNIT CONVERTER ===")
+        for key, category in self.categories.items():
+            print(f"{key}. {category['name']}")
+        print("6. Exit")
+
+    def convert(self, category_key, value, from_unit, to_unit):
+        cat = self.categories[category_key]["units"]
+        # Convert value to base unit, then convert from base unit to target unit
+        value_in_base = value * cat[from_unit]
+        converted_value = value_in_base / cat[to_unit]
+        return converted_value
+
+    def run(self):
+        while True:
+            self.display_categories()
+            choice = input("\nSelect a discipline category (1-6): ").strip()
+            
+            if choice == "6":
+                print("Exiting unit converter. Happy engineering!")
+                break
+                
+            if choice not in self.categories:
+                print("Invalid choice! Please select an option between 1 and 6.")
+                continue
+                
+            category = self.categories[choice]
+            print(f"\n--- {category['name']} ---")
+            print(f"Available Units: {', '.join(category['units'].keys())}")
+            print(f"Base conversion unit reference: {category['base']}")
+            
+            try:
+                from_unit = input("Enter source unit (from): ").strip().lower()
+                to_unit = input("Enter destination unit (to): ").strip().lower()
+                
+                if from_unit not in category["units"] or to_unit not in category["units"]:
+                    print("Error: One or both units are not recognized in this category.")
+                    continue
+                    
+                value = float(input(f"Enter the value in [{from_unit}]: "))
+                
+                result = self.convert(choice, value, from_unit, to_unit)
+                print(f"\n✨ RESULT: {value} {from_unit} = {result:.6g} {to_unit}")
+                
+            except ValueError:
+                print("Error: Invalid numeric input value.")
+            
+            input("\nPress Enter to return to the main menu...")
+
+if __name__ == "__main__":
+    converter = CivilUnitConverter()
+    converter.run()
