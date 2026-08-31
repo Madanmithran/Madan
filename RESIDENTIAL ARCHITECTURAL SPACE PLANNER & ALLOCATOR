@@ -1,0 +1,129 @@
+class ResidentialPlanner:
+    def __init__(self):
+        # Average required area (in sq feet) for standard functional rooms
+        self.room_standards = {
+            "master_bedroom": {"min_area": 120, "label": "Master Bedroom (with attached toilet)"},
+            "common_bedroom": {"min_area": 100, "label": "Common Bedroom / Kids Room"},
+            "living_room": {"min_area": 150, "label": "Living & Dining Hall"},
+            "kitchen": {"min_area": 80, "label": "Kitchen / Utility"},
+            "bathroom": {"min_area": 35, "label": "Common Bathroom / Toilet"},
+            "staircase_foyer": {"min_area": 50, "label": "Staircase / Circulation Foyer"}
+        }
+
+    def calculate_setbacks(self, length, width, area):
+        """
+        Calculates mandatory structural margins left open around a plot 
+        for ventilation and safety based on plot sizing brackets.
+        """
+        if area < 1000:
+            front, rear, sides = 3.0, 2.0, 2.0
+        elif area <= 2500:
+            front, rear, sides = 5.0, 3.0, 3.0
+        else:
+            front, rear, sides = 8.0, 5.0, 4.0
+
+        usable_length = max(0.0, length - (front + rear))
+        usable_width = max(0.0, width - (sides * 2))
+        usable_area = usable_length * usable_width
+        
+        return usable_area, {"front": front, "rear": rear, "sides": sides}
+
+    def suggest_layout(self, usable_area):
+        """
+        Prioritizes structural layouts based on available ground built-up coverage.
+        """
+        suggestions = []
+        remaining_space = usable_area
+
+        # Mandatory Core Spaces for any functional house
+        core_rooms = ["living_room", "kitchen", "bathroom", "staircase_foyer"]
+        core_cost = sum(self.room_standards[r]["min_area"] for r in core_rooms)
+
+        if remaining_space < core_cost:
+            return None, "The plot area is too small for a standard structural layout on a single floor. Consider building vertically (G+1/G+2)."
+
+        # Allocate baseline core layout
+        for room in core_rooms:
+            suggestions.append((self.room_standards[room]["label"], self.room_standards[room]["min_area"]))
+            remaining_space -= self.room_standards[room]["min_area"]
+
+        # Dynamically assign bedrooms based on remaining capacity
+        mb_area = self.room_standards["master_bedroom"]["min_area"]
+        cb_area = self.room_standards["common_bedroom"]["min_area"]
+        bath_area = self.room_standards["bathroom"]["min_area"]
+
+        # 3 BHK Config Capacity Check
+        if remaining_space >= (mb_area + (cb_area * 2) + bath_area):
+            suggestions.append((self.room_standards["master_bedroom"]["label"], mb_area + 20))
+            suggestions.append((self.room_standards["common_bedroom"]["label"] + " 1", cb_area))
+            suggestions.append((self.room_standards["common_bedroom"]["label"] + " 2", cb_area))
+            suggestions.append(("Attached Bathroom (Master)", bath_area))
+            remaining_space -= (mb_area + (cb_area * 2) + bath_area + 20)
+            bhk_type = "🏆 Luxury 3 BHK Layout"
+        
+        # 2 BHK Config Capacity Check
+        elif remaining_space >= (mb_area + cb_area + bath_area):
+            suggestions.append((self.room_standards["master_bedroom"]["label"], mb_area + 10))
+            suggestions.append((self.room_standards["common_bedroom"]["label"], cb_area))
+            suggestions.append(("Attached Bathroom (Master)", bath_area))
+            remaining_space -= (mb_area + cb_area + bath_area + 10)
+            bhk_type = "🏡 Standard 2 BHK Layout"
+            
+        # 1 BHK Config Capacity Check
+        elif remaining_space >= mb_area:
+            suggestions.append((self.room_standards["master_bedroom"]["label"], mb_area))
+            remaining_space -= mb_area
+            bhk_type = "🏢 Compact 1 BHK Layout"
+        else:
+            bhk_type = "Studio / 1 RK Configuration Layout"
+
+        # Distribute remaining square footage proportionally to expand existing rooms
+        if remaining_space > 0 and len(suggestions) > 0:
+            extra_per_room = remaining_space / len(suggestions)
+            suggestions = [(room[0], round(room[1] + extra_per_room, 1)) for room in suggestions]
+
+        return suggestions, bhk_type
+
+    def run(self):
+        print("="*60)
+        print(" 📐 RESIDENTIAL ARCHITECTURAL SPACE PLANNER & ALLOCATOR ")
+        print("="*60)
+        
+        try:
+            length = float(input("Enter plot LENGTH / Depth (in feet): "))
+            width = float(input("Enter plot WIDTH / Frontage (in feet): "))
+            floors = int(input("Enter number of residential floors planned (e.g., 1 for Ground only, 2 for G+1): ") or 1)
+            
+            total_land_area = length * width
+            usable_ground_area, margins = self.calculate_setbacks(length, width, total_land_area)
+            
+            # Total architectural design footprint across all target stories
+            total_design_footprint = usable_ground_area * floors
+
+            print("\n" + "-"*40)
+            print("🏗️ SITE ANALYSIS REPORT:")
+            print(f" • Total Land Surface Area  : {total_land_area:.2f} sq. ft.")
+            print(f" • Mandatory Safety Setbacks : Front: {margins['front']}ft | Rear: {margins['rear']}ft | Sides: {margins['sides']}ft")
+            print(f" • Ground Built-up Footprint : {usable_ground_area:.2f} sq. ft.")
+            print(f" • Total Usable Area ({floors} Floor(s)): {total_design_footprint:.2f} sq. ft.")
+            print("-"*40)
+
+            rooms, layout_title = self.suggest_layout(total_design_footprint)
+            
+            if rooms is None:
+                print(f"\n❌ DESIGN WARNING: {layout_title}")
+            else:
+                print(f"\n🎯 SUGGESTED ALLOCATION ({layout_title}):")
+                print(f"{'Functional Space / Room Type':<40} | {'Allocated Area (sq. ft.)':<20}")
+                print("-" * 65)
+                for room, area in rooms:
+                    print(f" • {room:<37} | {area:<20} sq. ft.")
+                print("-" * 65)
+                print(f"💡 Note: Room sizes include dynamic expansions distributed from surplus remaining space.")
+                
+        except ValueError:
+            print("❌ Input Error: Please enter valid positive numeric variables.")
+
+if __name__ == "__main__":
+    planner = ResidentialPlanner()
+    planner.run()
