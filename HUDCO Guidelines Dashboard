@@ -1,0 +1,144 @@
+class HUDCOGuidelinesDashboard:
+    def __init__(self):
+        # Official criteria compiled from HUDCO design templates, PMAY-U, and IS:8888 standards
+        self.guidelines = {
+            "1": {
+                "group": "EWS (Economically Weaker Section)",
+                "income_bracket": "Up to ₹3 Lakhs per annum",
+                "min_carpet_area_sqm": 21,
+                "max_carpet_area_sqm": 30,
+                "min_frontage_m": 3.6,
+                "max_ground_coverage": "Up to 60-70% (Cluster / Row Housing Allowed)",
+                "min_room_specs": "At least 2 rooms. Main room min 9m² (min width 2.5m). Second room min 6.5m².",
+                "structural_notes": "Load-bearing or low-rise RCC framework (G+3 max without lift tracking)."
+            },
+            "2": {
+                "group": "LIG (Low Income Group)",
+                "income_bracket": "₹3 Lakhs to ₹6 Lakhs per annum",
+                "min_carpet_area_sqm": 30,
+                "max_carpet_area_sqm": 60,
+                "min_frontage_m": 4.5,
+                "max_ground_coverage": "Up to 60% (Row/Semi-Detached Architecture)",
+                "min_room_specs": "Drawing room/Living room, bedroom, kitchen, independent toilet & bath.",
+                "structural_notes": "Masonry with Fly Ash bricks or framed designs focused on material optimisation."
+            },
+            "3": {
+                "group": "MIG-I (Middle Income Group - I)",
+                "income_bracket": "₹6 Lakhs to ₹12 Lakhs per annum",
+                "min_carpet_area_sqm": 60,
+                "max_carpet_area_sqm": 120,
+                "min_frontage_m": 6.0,
+                "max_ground_coverage": "Up to 50% (Semi-Detached or Flatted Complexes)",
+                "min_room_specs": "Typical 2 BHK / 3 BHK configurations meeting local authority masterplans.",
+                "structural_notes": "Full RCC framed configuration, standard urban zoning laws apply."
+            },
+            "4": {
+                "group": "MIG-II (Middle Income Group - II)",
+                "income_bracket": "₹12 Lakhs to ₹18 Lakhs per annum",
+                "min_carpet_area_sqm": 120,
+                "max_carpet_area_sqm": 150,
+                "min_frontage_m": 8.0,
+                "max_ground_coverage": "Up to 45-50% (Independent / Group Housing Options)",
+                "min_room_specs": "Spacious 3 BHK configurations with separate balconies and utilities.",
+                "structural_notes": "Multistory complex integration or private independent duplex frameworks."
+            },
+            "5": {
+                "group": "HIG (High Income Group)",
+                "income_bracket": "Above ₹18 Lakhs per annum",
+                "min_carpet_area_sqm": 150,
+                "max_carpet_area_sqm": 300, # Variable upper limit based on luxury classifications
+                "min_frontage_m": 10.0,
+                "max_ground_coverage": "Up to 33-40% (Detached Bungalow / Premium Complexes)",
+                "min_room_specs": "Luxury configurations with multi-car parks, servant rooms, and landscape areas.",
+                "structural_notes": "Premium specifications, custom structural designs, and local building bylaws apply."
+            }
+        }
+
+    def sqm_to_sqft(self, sqm_val):
+        return sqm_val * 10.7639
+
+    def display_menu(self):
+        print("\n" + "="*70)
+        print(" 🏢 HUDCO & NATIONAL URBAN HOUSING COMPLIANCE GUIDELINES ENGINE 🏢")
+        print("="*70)
+        for key, info in self.guidelines.items():
+            print(f" [{key}] {info['group']}")
+        print(" [6] Exit Dashboard")
+        print("="*70)
+
+    def analyze_compliance(self, choice):
+        data = self.guidelines[choice]
+        print("\n" + "•"*60)
+        print(f" TECHNICAL SPECIFICATIONS REPORT: {data['group'].upper()} ")
+        print("•"*60)
+        print(f" 💰 Household Income Cap : {data['income_bracket']}")
+        print(f" 📐 Permissible Carpet Area:")
+        print(f"    - Minimum Limit    : {data['min_carpet_area_sqm']} sq.m (~{self.sqm_to_sqft(data['min_carpet_area_sqm']):.1f} sq.ft)")
+        print(f"    - Maximum Limit    : {data['max_carpet_area_sqm']} sq.m (~{self.sqm_to_sqft(data['max_carpet_area_sqm']):.1f} sq.ft)")
+        print(f" 🛣️ Min Plot Frontage    : {data['min_frontage_m']} meters (~{data['min_frontage_m'] * 3.28084:.1f} feet)")
+        print(f" 🏗️ Max Ground Coverage  : {data['max_ground_coverage']}")
+        print(f" 🚪 Minimum Room Mandate : {data['min_room_specs']}")
+        print(f" 🧱 Structural System    : {data['structural_notes']}")
+        print("•"*60)
+
+    def check_plot_eligibility(self):
+        print("\n--- 📏 PLOT & INCOME ELIGIBILITY CHECKER ---")
+        try:
+            annual_income = float(input("Enter client's Annual Household Income (in ₹ Lakhs, e.g., 4.5): ") * 100000)
+            plot_area_sqft = float(input("Enter target planned built-up Carpet Area (in Sq. Feet): "))
+            plot_area_sqm = plot_area_sqft / 10.7639
+            
+            # Identify Income Category Group
+            matched_group = None
+            if annual_income <= 300000:
+                matched_group = "1"
+            elif annual_income <= 600000:
+                matched_group = "2"
+            elif annual_income <= 1200000:
+                matched_group = "3"
+            elif annual_income <= 1800000:
+                matched_group = "4"
+            else:
+                matched_group = "5"
+                
+            group_info = self.guidelines[matched_group]
+            print(f"\n📊 Income Mapping: Client categorizes under {group_info['group']}")
+            print(f"📐 Area Translation: {plot_area_sqft:.1f} sq.ft translates to {plot_area_sqm:.2f} sq.m")
+            
+            # Evaluate Compliance
+            min_lim = group_info['min_carpet_area_sqm']
+            max_lim = group_info['max_carpet_area_sqm']
+            
+            if plot_area_sqm < min_lim:
+                print(f"⚠️ COMPLIANCE ALERT: The proposed built-up size is BELOW HUDCO's suggested minimal structural density ({min_lim} sq.m) for this group.")
+            elif plot_area_sqm > max_lim:
+                print(f"❌ COMPLIANCE VIOLATION: Proposed built-up size exceeds the strict ceiling limit ({max_lim} sq.m) permitted for institutional/subsidised affordable configurations.")
+            else:
+                print("✅ DESIGN PASS: The proposed carpet area falls securely within HUDCO's building limits.")
+                
+        except ValueError:
+            print("❌ Input Error: Please enter numerical parameters.")
+
+    def run(self):
+        while True:
+            self.display_menu()
+            choice = input("Select an income classification index or action (1-6): ").strip()
+            
+            if choice in self.guidelines:
+                self.analyze_compliance(choice)
+                
+                check_sub = input("\nWould you like to run a custom Plot Eligibility Check against this classification? (y/n): ").strip().lower()
+                if check_sub == 'y':
+                    self.check_plot_eligibility()
+                    
+            elif choice == "6":
+                print("\nExiting HUDCO Compliance Framework Engine. Keep building safely!")
+                break
+            else:
+                print("❌ Invalid selection! Please enter a choice between 1 and 6.")
+                
+            input("\nPress Enter to return to the core dashboard loop...")
+
+if __name__ == "__main__":
+    engine = HUDCOGuidelinesDashboard()
+    engine.run()
